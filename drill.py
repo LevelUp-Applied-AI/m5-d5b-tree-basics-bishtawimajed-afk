@@ -25,7 +25,9 @@ def train_decision_tree(X_train, y_train, max_depth=5, random_state=42):
         Fitted DecisionTreeClassifier.
     """
     # TODO: Create and fit a DecisionTreeClassifier
-    pass
+    model = DecisionTreeClassifier(max_depth=max_depth, random_state=random_state)
+    model.fit(X_train, y_train)
+    return model
 
 
 def get_feature_importances(model, feature_names):
@@ -39,25 +41,32 @@ def get_feature_importances(model, feature_names):
         Dictionary mapping feature name to importance value, sorted descending.
     """
     # TODO: Extract importances and return as a sorted dictionary
-    pass
-
+    importances = model.feature_importances_
+    feat_dict = dict(zip(feature_names, importances))
+    sorted_importances = dict(sorted(feat_dict.items(), key=lambda item: item[1], reverse=True))
+    return sorted_importances
 
 def train_balanced_forest(X_train, y_train, X_test, y_test,
                           n_estimators=100, random_state=42):
-    """Train a RandomForest with balanced class weights and return metrics.
-
-    Args:
-        X_train, y_train: Training data.
-        X_test, y_test: Test data.
-        n_estimators: Number of trees.
-        random_state: Random seed.
-
-    Returns:
-        Dictionary with keys: 'precision', 'recall', 'f1'.
-    """
     # TODO: Train RandomForestClassifier with class_weight='balanced',
     #       predict on test set, compute and return metrics
-    pass
+    
+    model = RandomForestClassifier(
+        n_estimators=n_estimators,
+        class_weight='balanced',
+        random_state=random_state,
+        max_depth=5 
+    )
+    model.fit(X_train, y_train)
+
+    y_pred = model.predict(X_test)
+    
+    metrics = {
+        "precision": float(precision_score(y_test, y_pred)),
+        "recall": float(recall_score(y_test, y_pred)),
+        "f1": float(f1_score(y_test, y_pred))
+    }
+    return metrics
 
 
 if __name__ == "__main__":
